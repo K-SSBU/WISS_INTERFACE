@@ -638,23 +638,27 @@ $(document).ready(function() {
     // 例: centerContribs.vocal["sm123"][targetId] = 寄与値
     const centerContribs = { vocal: {}, inst: {}, lyric: {} };
 
-    /** 寄与の集約方法（concatTypeで切替） */
     function combineContribs(values) {
-        if (concatType === "MaxMin") {
-            // 最大の正寄与と、最小の負寄与のみを採用
             let maxPos = 0;
             let minNeg = 0;
+            let p03count = 0; // v >= 0.3 の件数
+            let n03count = 0; // v <= -0.3 の件数
             for (const v of values) {
                 if (v > maxPos) maxPos = v;
                 if (v < minNeg) minNeg = v;
+                if (v >= 0.3) p03count++;
+                if (v <= -0.3) n03count++;
             }
-            return maxPos + minNeg;
-        }
-        // 既定: 総和（AllPattern）
-        return values.reduce((s, v) => s + v, 0);
+            
+            // 0で除算するときは1で除算
+            const denomPos = (p03count === 0) ? 1 : p03count;
+            const denomNeg = (n03count === 0) ? 1 : n03count;
+
+            // （プラス側の最大値）/（マイナス側で0.3以下の値を出力する評価済の楽曲数）＋（マイナス側の最小値）/（プラス側で0.3以上の値を出力する評価済の楽曲数）
+            const z = (maxPos / denomNeg) + (minNeg / denomPos);
+            return { z, p03count, n03count, maxPos, minNeg };
     }
 
-    /** あるカテゴリの全ターゲット曲について、保持中の寄与を合成してZを更新 */
     function recomputeCategoryZ(category) {
         const sd = (category === 'vocal') ? vocal_scatterData
                 : (category === 'inst')  ? inst_scatterData
@@ -663,19 +667,62 @@ $(document).ready(function() {
 
         Object.keys(sd).forEach(targetId => {
             const p = sd[targetId];
-            if (p.listen_flag === true) return;  // 評価済みは変更しない
+
+            // Zの更新は未評価のみ（評価済みは固定のまま）
+            if (p.listen_flag === true) return;
 
             const vs = [];
-            // すべてのセンターから、このターゲットへの寄与を集める
             for (const cId in centers) {
                 const v = centers[cId][targetId];
                 if (v !== undefined) vs.push(v);
             }
-            const z = combineContribs(vs);
+
+            // 値が1つも無ければ0扱い
+            if (vs.length === 0) {
+                songData[targetId][`${category}_value`] = 0.0;
+                p[`${category}_value`] = 0.0;
+                p.Z_value = 0.0;
+                p.p03count = 0;
+                p.n03count = 0;
+                return;
+            }
+
+            const combined = combineContribs(vs);
+
+            const z = (typeof combined === 'object') ? combined.z : combined;
+            const p03count = (typeof combined === 'object') ? combined.p03count : 0;
+            const n03count = (typeof combined === 'object') ? combined.n03count : 0;
+
+            // 反映
             songData[targetId][`${category}_value`] = z;
             p[`${category}_value`] = z;
             p.Z_value = z;
+
+            // 件数も保持
+            p.p03count = p03count;
+            p.n03count = n03count;
+            songData[targetId][`${category}_p03count`] = p03count;
+            songData[targetId][`${category}_n03count`] = n03count;
         });
+    }
+
+    // カウントデバッグ用関数
+    function logZwithCounts(category, limit = 10) {
+        // limit：コンソールで表示する楽曲数（未評価で再生数が上位順）
+        const sd = (category === 'vocal') ? vocal_scatterData
+                : (category === 'inst')  ? inst_scatterData
+                :                          lyric_scatterData;
+        const rows = Object.values(sd)
+            .filter(p => p.listen_flag === false) // 未評価だけ表示
+            .slice(0, limit)
+            .map(p => ({
+                songid: p.songid,
+                title: p.title,
+                Z: p.Z_value,
+                p03count: p.p03count ?? 0,
+                n03count: p.n03count ?? 0
+            }));
+        console.table(rows);
     }
 
     // 要素ごとの各楽曲にガウス分布を付与する関数（個別に許容度設定）
@@ -751,6 +798,7 @@ $(document).ready(function() {
 
             // 集約してZを再計算
             recomputeCategoryZ(category);
+            // logZwithCounts(category, 10);
         }
     }
 
@@ -831,6 +879,7 @@ $(document).ready(function() {
 
             // 集約してZを再計算
             recomputeCategoryZ(category);
+            // logZwithCounts(category, 10);
 
             // 見た目更新
             selectedScatterPlotColors(listenSongID, category);
