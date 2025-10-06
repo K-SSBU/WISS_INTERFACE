@@ -520,8 +520,6 @@ $(document).ready(function() {
                                 return [
                                     `${dataPoint.title}`,
                                      `${dataPoint.writer}`,
-                                     `listen_flag = ${dataPoint.listen_flag}`,
-                                     `${category}_value = ${dataPoint[category + "_value"]}`,
                                      `Z = ${dataPoint.Z_value.toFixed(4)}`
                                     ];
                             }
@@ -976,4 +974,5 @@ $(document).ready(function() {
     }
 
     $('#loading').fadeOut();
+
 });
