@@ -786,7 +786,7 @@ $(document).ready(function() {
 
             if (exp_song_id === "sm33480697"){
                 exp_song_id = explore_song();
-                exp_song_id = "sm28696493";
+                exp_song_id = "sm15022913";
             }
 
             top5_songs = recommend_songs();
@@ -805,5 +805,6 @@ $(document).ready(function() {
     $('#loading').fadeOut();
 
 });
+
 
 
