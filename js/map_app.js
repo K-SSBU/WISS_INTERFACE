@@ -318,7 +318,7 @@ $(document).ready(function() {
             });    
         }
         // return sortedSongZ.slice(0, 5);
-        return [sumData["sm42044372"], sumData["sm31405153"], sumData["sm12825985"], sumData["sm15172108"], sumData["sm2053548"]];
+        return [sumData["sm2053548"], sumData["sm31405153"], sumData["sm12825985"], sumData["sm15172108"], sumData["sm42044372"]];
     }
 
     // 探索結果の楽曲を表示する関数
@@ -805,4 +805,5 @@ $(document).ready(function() {
     $('#loading').fadeOut();
 
 });
+
 
