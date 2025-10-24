@@ -784,11 +784,16 @@ $(document).ready(function() {
         if (songData[listenSongID]?.listen_flag === true) {
             save_current_song_state();
 
-            if (exp_song_id === "sm33480697"){
+            if (exp_song_id === "sm28696493"){
                 exp_song_id = explore_song();
                 exp_song_id = "sm15022913";
             }
-
+            
+            if (exp_song_id === "sm33480697"){
+                exp_song_id = explore_song();
+                exp_song_id = "sm28696493";
+            }
+            
             top5_songs = recommend_songs();
 
             // console.log(next_exp_song_id);
@@ -805,6 +810,7 @@ $(document).ready(function() {
     $('#loading').fadeOut();
 
 });
+
 
 
 
