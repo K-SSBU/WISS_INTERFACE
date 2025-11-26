@@ -97,6 +97,8 @@ $(document).ready(function() {
 
             $('.first-song-area').hide();
             exp_song_id = explore_song(); // 探索楽曲
+            exp_song_id = "sm33480697";
+
             top5_songs = recommend_songs(); // 推薦楽曲（5曲）
 
             render_exp_song(exp_song_id); // 探索楽曲を表示
@@ -315,7 +317,8 @@ $(document).ready(function() {
                 }
             });    
         }
-        return sortedSongZ.slice(0, 5);
+        // return sortedSongZ.slice(0, 5);
+        return [sumData["sm2053548"], sumData["sm31405153"], sumData["sm12825985"], sumData["sm15172108"], sumData["sm42044372"]];
     }
 
     // 探索結果の楽曲を表示する関数
@@ -781,7 +784,16 @@ $(document).ready(function() {
         if (songData[listenSongID]?.listen_flag === true) {
             save_current_song_state();
 
-            exp_song_id = explore_song();
+            if (exp_song_id === "sm28696493"){
+                exp_song_id = explore_song();
+                exp_song_id = "sm15022913";
+            }
+            
+            if (exp_song_id === "sm33480697"){
+                exp_song_id = explore_song();
+                exp_song_id = "sm28696493";
+            }
+            
             top5_songs = recommend_songs();
 
             // console.log(next_exp_song_id);
@@ -798,5 +810,6 @@ $(document).ready(function() {
     $('#loading').fadeOut();
 
 });
+
 
 
