@@ -292,7 +292,7 @@ canvas {
 
 .rating-button {
     width: 15.5%;
-    height: 65.5%;
+    height: 81%;
     border-radius: 50%; /* アイコン選択時の円の大きさ */
     display: flex;
     align-items: center;
@@ -307,7 +307,7 @@ canvas {
 
 .select-icon{
     pointer-events: none;
-    font-size: 45px;
+    font-size: 48px;
     -ms-user-select: none;
     -webkit-user-select: none;
     user-select: none;
@@ -589,4 +589,5 @@ canvas {
   100%{-webkit-transform:rotate(360deg)}
 
 }
+
 
