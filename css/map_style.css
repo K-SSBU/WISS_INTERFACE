@@ -292,7 +292,7 @@ canvas {
 
 .rating-button {
     width: 17.5%;
-    height: 82%;
+    height: 72.5%;
     border-radius: 50%; /* アイコン選択時の円の大きさ */
     display: flex;
     align-items: center;
@@ -587,4 +587,5 @@ canvas {
 @-webkit-keyframes circle{
   0%{-webkit-transform:rotate(0deg)}
   100%{-webkit-transform:rotate(360deg)}
+
 }
